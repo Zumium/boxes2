@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boxes.iml" filepath="$PROJECT_DIR$/.idea/modules/boxes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boxes_main.iml" filepath="$PROJECT_DIR$/.idea/modules/boxes_main.iml" group="boxes" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boxes_test.iml" filepath="$PROJECT_DIR$/.idea/modules/boxes_test.iml" group="boxes" />
+    </modules>
+  </component>
+</project>
