@@ -4,6 +4,7 @@ buildscript {
     ext.exposed_version = '0.9.1'
     ext.thrift_version = '0.11.0'
     ext.h2_version = '1.4.196'
+    ext.commons_io_version = '2.6'
 
     repositories {
         mavenCentral()
@@ -36,6 +37,7 @@ dependencies {
     compile "com.github.salomonbrys.kodein:kodein:$kodein_version"
     compile "org.jetbrains.exposed:exposed:$exposed_version"
     compile "org.apache.thrift:libthrift:$thrift_version"
+    compile "commons-io:commons-io:$commons_io_version"
     runtime "com.h2database:h2:$h2_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

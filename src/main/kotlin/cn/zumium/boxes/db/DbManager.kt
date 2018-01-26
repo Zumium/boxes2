@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.and
 import org.joda.time.DateTime
 
 class DbManager(override val kodein: Kodein) : KodeinAware {
-    class BoxManager {
+    inner class BoxManager {
         fun create(boxName: String, descrip: String? = null): Box {
             return Box.new {
                 name = boxName
@@ -29,7 +29,8 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
         fun getBox(id: Long) = Box.findById(id)
         fun getAllBox() = Box.all()
     }
-    class LinkManager {
+
+    inner class LinkManager {
         fun create(srcBox: Box, innerPth: String, dst:String, ltype: LinkType): Link {
             return Link.new {
                 box = srcBox
@@ -49,12 +50,8 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
 
     private val configManager = instance<ConfigManager>()
 
-    private val boxManager = BoxManager()
-    private val linkManager = LinkManager()
-
-    fun box() = boxManager
-
-    fun link() = linkManager
+    val box = BoxManager()
+    val link = LinkManager()
 
     fun init() {
         Database.connect("jdbc:h2:${configManager.dbPath()}", driver = "org.h2.Driver")

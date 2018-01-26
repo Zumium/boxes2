@@ -38,6 +38,7 @@
     <orderEntry type="library" name="Gradle: com.github.salomonbrys.kodein:kodein:4.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.exposed:exposed:0.9.1" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.thrift:libthrift:0.11.0" level="project" />
+    <orderEntry type="library" name="Gradle: commons-io:commons-io:2.6" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.21" level="project" />
     <orderEntry type="library" name="Gradle: com.github.salomonbrys.kodein:kodein-core:4.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-reflect:1.1.60" level="project" />
