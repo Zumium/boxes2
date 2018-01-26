@@ -1,5 +1,6 @@
 package cn.zumium.boxes.db
 
+import cn.zumium.boxes.config.ConfigManager
 import cn.zumium.boxes.db.dao.Box
 import cn.zumium.boxes.db.dao.Boxes
 import cn.zumium.boxes.db.dao.Link
@@ -8,6 +9,7 @@ import cn.zumium.boxes.thrift.BoxStatus
 import cn.zumium.boxes.thrift.LinkType
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
+import com.github.salomonbrys.kodein.instance
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.and
@@ -45,6 +47,8 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
         fun getLink(destination: String) = Link.find { Links.destination eq destination }.first()
     }
 
+    private val configManager = instance<ConfigManager>()
+
     private val boxManager = BoxManager()
     private val linkManager = LinkManager()
 
@@ -53,7 +57,7 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
     fun link() = linkManager
 
     fun init() {
-        Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
+        Database.connect("jdbc:h2:${configManager.dbPath()}", driver = "org.h2.Driver")
         SchemaUtils.create(Boxes, Links)
     }
 }
