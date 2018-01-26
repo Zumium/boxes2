@@ -24,6 +24,16 @@ enum FetchBy {
     MOVE
 }
 
+enum LsType {
+    FILE,
+    DIR
+}
+
+struct LsItem {
+    1:string name,
+    2:LsType type,
+}
+
 enum LinkType {
     SOFT,
     HARD
@@ -72,7 +82,7 @@ service FileService {
     void remove(1:i64 boxId, 2:string innerPath) throws (1:ServiceException excp),
 
     //Read
-    void ls(1:i64 boxId, 2:string innerDir) throws (1:ServiceException excp),
+    list<LsItem> ls(1:i64 boxId, 2:string innerDir) throws (1:ServiceException excp),
 
     //Move & Copy Among Boxes
     void move(1:i64 srcBoxId, 2:string srcInnerPath, 3:i64 dstBoxId, 4:string dstInnerPath) throws (1:ServiceException excp),

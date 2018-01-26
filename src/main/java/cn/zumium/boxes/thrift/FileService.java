@@ -18,7 +18,7 @@ public class FileService {
 
     public void remove(long boxId, java.lang.String innerPath) throws ServiceException, org.apache.thrift.TException;
 
-    public void ls(long boxId, java.lang.String innerDir) throws ServiceException, org.apache.thrift.TException;
+    public java.util.List<LsItem> ls(long boxId, java.lang.String innerDir) throws ServiceException, org.apache.thrift.TException;
 
     public void move(long srcBoxId, java.lang.String srcInnerPath, long dstBoxId, java.lang.String dstInnerPath) throws ServiceException, org.apache.thrift.TException;
 
@@ -36,7 +36,7 @@ public class FileService {
 
     public void remove(long boxId, java.lang.String innerPath, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException;
 
-    public void ls(long boxId, java.lang.String innerDir, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException;
+    public void ls(long boxId, java.lang.String innerDir, org.apache.thrift.async.AsyncMethodCallback<java.util.List<LsItem>> resultHandler) throws org.apache.thrift.TException;
 
     public void move(long srcBoxId, java.lang.String srcInnerPath, long dstBoxId, java.lang.String dstInnerPath, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException;
 
@@ -142,10 +142,10 @@ public class FileService {
       return;
     }
 
-    public void ls(long boxId, java.lang.String innerDir) throws ServiceException, org.apache.thrift.TException
+    public java.util.List<LsItem> ls(long boxId, java.lang.String innerDir) throws ServiceException, org.apache.thrift.TException
     {
       send_ls(boxId, innerDir);
-      recv_ls();
+      return recv_ls();
     }
 
     public void send_ls(long boxId, java.lang.String innerDir) throws org.apache.thrift.TException
@@ -156,14 +156,17 @@ public class FileService {
       sendBase("ls", args);
     }
 
-    public void recv_ls() throws ServiceException, org.apache.thrift.TException
+    public java.util.List<LsItem> recv_ls() throws ServiceException, org.apache.thrift.TException
     {
       ls_result result = new ls_result();
       receiveBase(result, "ls");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
       if (result.excp != null) {
         throw result.excp;
       }
-      return;
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "ls failed: unknown result");
     }
 
     public void move(long srcBoxId, java.lang.String srcInnerPath, long dstBoxId, java.lang.String dstInnerPath) throws ServiceException, org.apache.thrift.TException
@@ -378,17 +381,17 @@ public class FileService {
       }
     }
 
-    public void ls(long boxId, java.lang.String innerDir, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException {
+    public void ls(long boxId, java.lang.String innerDir, org.apache.thrift.async.AsyncMethodCallback<java.util.List<LsItem>> resultHandler) throws org.apache.thrift.TException {
       checkReady();
       ls_call method_call = new ls_call(boxId, innerDir, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class ls_call extends org.apache.thrift.async.TAsyncMethodCall<Void> {
+    public static class ls_call extends org.apache.thrift.async.TAsyncMethodCall<java.util.List<LsItem>> {
       private long boxId;
       private java.lang.String innerDir;
-      public ls_call(long boxId, java.lang.String innerDir, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public ls_call(long boxId, java.lang.String innerDir, org.apache.thrift.async.AsyncMethodCallback<java.util.List<LsItem>> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.boxId = boxId;
         this.innerDir = innerDir;
@@ -403,13 +406,13 @@ public class FileService {
         prot.writeMessageEnd();
       }
 
-      public Void getResult() throws ServiceException, org.apache.thrift.TException {
+      public java.util.List<LsItem> getResult() throws ServiceException, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new java.lang.IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return null;
+        return (new Client(prot)).recv_ls();
       }
     }
 
@@ -664,7 +667,7 @@ public class FileService {
       public ls_result getResult(I iface, ls_args args) throws org.apache.thrift.TException {
         ls_result result = new ls_result();
         try {
-          iface.ls(args.boxId, args.innerDir);
+          result.success = iface.ls(args.boxId, args.innerDir);
         } catch (ServiceException excp) {
           result.excp = excp;
         }
@@ -974,7 +977,7 @@ public class FileService {
       }
     }
 
-    public static class ls<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, ls_args, Void> {
+    public static class ls<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, ls_args, java.util.List<LsItem>> {
       public ls() {
         super("ls");
       }
@@ -983,11 +986,12 @@ public class FileService {
         return new ls_args();
       }
 
-      public org.apache.thrift.async.AsyncMethodCallback<Void> getResultHandler(final org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer fb, final int seqid) {
+      public org.apache.thrift.async.AsyncMethodCallback<java.util.List<LsItem>> getResultHandler(final org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new org.apache.thrift.async.AsyncMethodCallback<Void>() { 
-          public void onComplete(Void o) {
+        return new org.apache.thrift.async.AsyncMethodCallback<java.util.List<LsItem>>() { 
+          public void onComplete(java.util.List<LsItem> o) {
             ls_result result = new ls_result();
+            result.success = o;
             try {
               fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
             } catch (org.apache.thrift.transport.TTransportException e) {
@@ -1033,7 +1037,7 @@ public class FileService {
         return false;
       }
 
-      public void start(I iface, ls_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException {
+      public void start(I iface, ls_args args, org.apache.thrift.async.AsyncMethodCallback<java.util.List<LsItem>> resultHandler) throws org.apache.thrift.TException {
         iface.ls(args.boxId, args.innerDir,resultHandler);
       }
     }
@@ -4623,15 +4627,18 @@ public class FileService {
   public static class ls_result implements org.apache.thrift.TBase<ls_result, ls_result._Fields>, java.io.Serializable, Cloneable, Comparable<ls_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ls_result");
 
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.LIST, (short)0);
     private static final org.apache.thrift.protocol.TField EXCP_FIELD_DESC = new org.apache.thrift.protocol.TField("excp", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new ls_resultStandardSchemeFactory();
     private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new ls_resultTupleSchemeFactory();
 
+    public java.util.List<LsItem> success; // required
     public ServiceException excp; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
       EXCP((short)1, "excp");
 
       private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
@@ -4647,6 +4654,8 @@ public class FileService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
           case 1: // EXCP
             return EXCP;
           default:
@@ -4692,6 +4701,9 @@ public class FileService {
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+              new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, LsItem.class))));
       tmpMap.put(_Fields.EXCP, new org.apache.thrift.meta_data.FieldMetaData("excp", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ServiceException.class)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
@@ -4702,9 +4714,11 @@ public class FileService {
     }
 
     public ls_result(
+      java.util.List<LsItem> success,
       ServiceException excp)
     {
       this();
+      this.success = success;
       this.excp = excp;
     }
 
@@ -4712,6 +4726,13 @@ public class FileService {
      * Performs a deep copy on <i>other</i>.
      */
     public ls_result(ls_result other) {
+      if (other.isSetSuccess()) {
+        java.util.List<LsItem> __this__success = new java.util.ArrayList<LsItem>(other.success.size());
+        for (LsItem other_element : other.success) {
+          __this__success.add(new LsItem(other_element));
+        }
+        this.success = __this__success;
+      }
       if (other.isSetExcp()) {
         this.excp = new ServiceException(other.excp);
       }
@@ -4723,7 +4744,47 @@ public class FileService {
 
     @Override
     public void clear() {
+      this.success = null;
       this.excp = null;
+    }
+
+    public int getSuccessSize() {
+      return (this.success == null) ? 0 : this.success.size();
+    }
+
+    public java.util.Iterator<LsItem> getSuccessIterator() {
+      return (this.success == null) ? null : this.success.iterator();
+    }
+
+    public void addToSuccess(LsItem elem) {
+      if (this.success == null) {
+        this.success = new java.util.ArrayList<LsItem>();
+      }
+      this.success.add(elem);
+    }
+
+    public java.util.List<LsItem> getSuccess() {
+      return this.success;
+    }
+
+    public ls_result setSuccess(java.util.List<LsItem> success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
     }
 
     public ServiceException getExcp() {
@@ -4752,6 +4813,14 @@ public class FileService {
 
     public void setFieldValue(_Fields field, java.lang.Object value) {
       switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((java.util.List<LsItem>)value);
+        }
+        break;
+
       case EXCP:
         if (value == null) {
           unsetExcp();
@@ -4765,6 +4834,9 @@ public class FileService {
 
     public java.lang.Object getFieldValue(_Fields field) {
       switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
       case EXCP:
         return getExcp();
 
@@ -4779,6 +4851,8 @@ public class FileService {
       }
 
       switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
       case EXCP:
         return isSetExcp();
       }
@@ -4800,6 +4874,15 @@ public class FileService {
       if (this == that)
         return true;
 
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
       boolean this_present_excp = true && this.isSetExcp();
       boolean that_present_excp = true && that.isSetExcp();
       if (this_present_excp || that_present_excp) {
@@ -4816,6 +4899,10 @@ public class FileService {
     public int hashCode() {
       int hashCode = 1;
 
+      hashCode = hashCode * 8191 + ((isSetSuccess()) ? 131071 : 524287);
+      if (isSetSuccess())
+        hashCode = hashCode * 8191 + success.hashCode();
+
       hashCode = hashCode * 8191 + ((isSetExcp()) ? 131071 : 524287);
       if (isSetExcp())
         hashCode = hashCode * 8191 + excp.hashCode();
@@ -4831,6 +4918,16 @@ public class FileService {
 
       int lastComparison = 0;
 
+      lastComparison = java.lang.Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       lastComparison = java.lang.Boolean.valueOf(isSetExcp()).compareTo(other.isSetExcp());
       if (lastComparison != 0) {
         return lastComparison;
@@ -4861,6 +4958,14 @@ public class FileService {
       java.lang.StringBuilder sb = new java.lang.StringBuilder("ls_result(");
       boolean first = true;
 
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
       sb.append("excp:");
       if (this.excp == null) {
         sb.append("null");
@@ -4911,6 +5016,25 @@ public class FileService {
             break;
           }
           switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+                {
+                  org.apache.thrift.protocol.TList _list8 = iprot.readListBegin();
+                  struct.success = new java.util.ArrayList<LsItem>(_list8.size);
+                  LsItem _elem9;
+                  for (int _i10 = 0; _i10 < _list8.size; ++_i10)
+                  {
+                    _elem9 = new LsItem();
+                    _elem9.read(iprot);
+                    struct.success.add(_elem9);
+                  }
+                  iprot.readListEnd();
+                }
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             case 1: // EXCP
               if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
                 struct.excp = new ServiceException();
@@ -4935,6 +5059,18 @@ public class FileService {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          {
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
+            for (LsItem _iter11 : struct.success)
+            {
+              _iter11.write(oprot);
+            }
+            oprot.writeListEnd();
+          }
+          oprot.writeFieldEnd();
+        }
         if (struct.excp != null) {
           oprot.writeFieldBegin(EXCP_FIELD_DESC);
           struct.excp.write(oprot);
@@ -4958,10 +5094,22 @@ public class FileService {
       public void write(org.apache.thrift.protocol.TProtocol prot, ls_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
         java.util.BitSet optionals = new java.util.BitSet();
-        if (struct.isSetExcp()) {
+        if (struct.isSetSuccess()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetExcp()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          {
+            oprot.writeI32(struct.success.size());
+            for (LsItem _iter12 : struct.success)
+            {
+              _iter12.write(oprot);
+            }
+          }
+        }
         if (struct.isSetExcp()) {
           struct.excp.write(oprot);
         }
@@ -4970,8 +5118,22 @@ public class FileService {
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, ls_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-        java.util.BitSet incoming = iprot.readBitSet(1);
+        java.util.BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
+          {
+            org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new java.util.ArrayList<LsItem>(_list13.size);
+            LsItem _elem14;
+            for (int _i15 = 0; _i15 < _list13.size; ++_i15)
+            {
+              _elem14 = new LsItem();
+              _elem14.read(iprot);
+              struct.success.add(_elem14);
+            }
+          }
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
           struct.excp = new ServiceException();
           struct.excp.read(iprot);
           struct.setExcpIsSet(true);
