@@ -10,6 +10,7 @@ import cn.zumium.boxes.thrift.LinkService
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
 import com.github.salomonbrys.kodein.instance
+import org.apache.thrift.TMultiplexedProcessor
 import org.apache.thrift.server.TServer
 import org.apache.thrift.server.TThreadPoolServer
 import org.apache.thrift.transport.TServerSocket
@@ -20,12 +21,13 @@ class RpcManager(override val kodein: Kodein) : KodeinAware {
     private val configManager = instance<ConfigManager>()
 
     fun serve() {
-        val boxControllerProcessor = BoxService.Processor(instance<BoxController>())
-        val fileControllerProcessor = FileService.Processor(instance<FileController>())
-        val linkControllerProcessor = LinkService.Processor(instance<LinkController>())
+        val processors = TMultiplexedProcessor()
+        processors.registerProcessor("BoxService", BoxService.Processor(instance<BoxController>()))
+        processors.registerProcessor("FileService", FileService.Processor(instance<FileController>()))
+        processors.registerProcessor("LinkService", LinkService.Processor(instance<LinkController>()))
 
         val transport: TServerTransport = TServerSocket(InetSocketAddress("localhost", configManager.port()))
-        val server: TServer = TThreadPoolServer(TThreadPoolServer.Args(transport).processor(boxControllerProcessor).processor(fileControllerProcessor).processor(linkControllerProcessor))
+        val server: TServer = TThreadPoolServer(TThreadPoolServer.Args(transport).processor(processors))
 
         server.serve()
     }

@@ -1,17 +1,14 @@
 package cn.zumium.boxes.fs
 
 import cn.zumium.boxes.config.ConfigManager
-import cn.zumium.boxes.db.dao.Box
 import cn.zumium.boxes.thrift.*
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
 import com.github.salomonbrys.kodein.instance
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.filefilter.IOFileFilter
 import org.apache.commons.io.filefilter.TrueFileFilter
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.Paths.get
 
