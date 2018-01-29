@@ -63,8 +63,8 @@ service BoxService {
     void setName(1:i64 id, 2:string name) throws (1:ServiceException excp),
 
     //Archive & Unarchive
-    void archive(1:i64 boxId) throws (1:ServiceException excp),
-    void unarchive(1:i64 boxId) throws (1:ServiceException excp),
+    void archive(1:i64 id) throws (1:ServiceException excp),
+    void unarchive(1:i64 id) throws (1:ServiceException excp),
 
     //Read
     list<Box> currentBoxes() throws (1:ServiceException excp),
@@ -88,6 +88,7 @@ service FileService {
     void move(1:i64 srcBoxId, 2:string srcInnerPath, 3:i64 dstBoxId, 4:string dstInnerPath) throws (1:ServiceException excp),
     void copy(1:i64 srcBoxId, 2:string srcInnerPath, 3:i64 dstBoxId, 4:string dstInnerPath) throws (1:ServiceException excp),
     void innerMove(1:i64 boxId, 2:string srcInnerPath, 3:string dstInnerPath) throws (1:ServiceException excp),
+    void innerCopy(1:i64 boxId, 2:string srcInnerPath, 3:string dstInnerPath) throws (1:ServiceException excp),
 }
 
 service LinkService {
@@ -97,7 +98,7 @@ service LinkService {
     //Read
     list<Link> lsAll() throws (1:ServiceException excp),
     list<Link> lsBox(1:i64 boxId) throws (1:ServiceException excp),
-    list<Link> lsInner(1:i64 boxId, 2:string innerPath) throws (1:ServiceException excp),
+    Link lsInner(1:i64 boxId, 2:string innerPath) throws (1:ServiceException excp),
 
     //Delete
     void removeAll() throws (1:ServiceException excp),

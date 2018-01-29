@@ -2,6 +2,7 @@ package cn.zumium.boxes.fs
 
 import cn.zumium.boxes.config.ConfigManager
 import cn.zumium.boxes.thrift.*
+import cn.zumium.boxes.util.SevenZipUtil
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
 import com.github.salomonbrys.kodein.instance
@@ -14,6 +15,7 @@ import java.nio.file.Paths.get
 
 class FsManager(override val kodein: Kodein) : KodeinAware {
     private val configManager = instance<ConfigManager>()
+    private val sevenZipUtil = instance<SevenZipUtil>()
 
     inner class BoxManager {
         fun create(name: String) = FileUtils.forceMkdir(File(boxPath(name).toString()))
@@ -24,7 +26,7 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
         fun add(boxName: String, innerPath: String, source: String, addBy: AddBy) {
             val srcFile = File(source)
             if (!srcFile.exists())
-                throw FsBoxException("source ${srcFile.toString()} not exist")
+                throw FsBoxException("source $srcFile not exist")
 
             when (addBy) {
                 AddBy.COPY -> copy(srcFile, File(boxFullPath(boxName, innerPath).toString()))
@@ -132,11 +134,19 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
         }
     }
 
+    inner class ArchiveManager {
+        fun archive(boxName: String) = sevenZipUtil.compressDirectory(boxPath(boxName), archivePath(boxName))
+
+        fun unarchive(boxName: String) = sevenZipUtil.decompressDirectory(archivePath(boxName), Paths.get(configManager.boxBase()))
+    }
+
     val box = BoxManager()
     val file = FileManager()
     val link = LinkManager()
+    val archive = ArchiveManager()
 
     //--------------helper functions-------------
+    private fun archivePath(name: String) = get(configManager.archiveBase(), "${name}.${configManager.archiveExtension()}")
     private fun boxPath(name: String) = get(configManager.boxBase(), name)
     private fun boxFullPath(name: String, innerPath: String) = boxPath(name).resolve(innerPath)
 }

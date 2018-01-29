@@ -5,6 +5,7 @@ buildscript {
     ext.thrift_version = '0.11.0'
     ext.h2_version = '1.4.196'
     ext.commons_io_version = '2.6'
+    ext.slf4j_version = '1.7.25'
 
     repositories {
         mavenCentral()
@@ -25,6 +26,12 @@ sourceCompatibility = 1.8
 
 mainClassName = 'cn.zumium.boxes.MainKt'
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'cn.zumium.boxes.MainKt'
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -34,10 +41,12 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "com.github.salomonbrys.kodein:kodein:$kodein_version"
     compile "org.jetbrains.exposed:exposed:$exposed_version"
     compile "org.apache.thrift:libthrift:$thrift_version"
     compile "commons-io:commons-io:$commons_io_version"
+    compile "org.slf4j:slf4j-simple:$slf4j_version"
     runtime "com.h2database:h2:$h2_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

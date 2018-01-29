@@ -26,8 +26,8 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
             }
         }
 
-        fun getBox(id: Long) = Box.findById(id)
-        fun getAllBox() = Box.all()
+        fun getBox(id: Long) = Box.findById(id) ?: throw DbBoxNotFoundException(id)
+        fun getAllBox() = Box.all().toList()
     }
 
     inner class LinkManager {
@@ -42,8 +42,8 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
         }
 
         fun getAllLink() = Link.all()
-        fun getLink(id: Long) = Link.findById(id)
-        fun getLink(box: Box) = Link.find { Links.box eq box }.first()
+        fun getLink(id: Long) = Link.findById(id) ?: throw DbLinkNotFoundException(id)
+        fun getLink(box: Box) = Link.find { Links.box eq box }
         fun getLink(box: Box, innerPath: String) = Link.find { Links.box eq box and (Links.innerPath eq innerPath) }.first()
         fun getLink(destination: String) = Link.find { Links.destination eq destination }.first()
     }

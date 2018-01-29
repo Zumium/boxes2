@@ -9,6 +9,7 @@ class ConfigManager(override val kodein: Kodein) : KodeinAware{
     private val kDbFile = "main.db"
     private val kBoxBaseDirName = "boxBase"
     private val kArchiveBaseDirName = "archiveBase"
+    private val kArchiveExtension = "box"
 
     private var home = ""
     private var port = 6077
@@ -25,4 +26,5 @@ class ConfigManager(override val kodein: Kodein) : KodeinAware{
     fun boxBase() = home + kBoxBaseDirName
     fun archiveBase() = home + kArchiveBaseDirName
     fun port() = port
+    fun archiveExtension() = kArchiveExtension
 }
