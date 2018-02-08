@@ -24,18 +24,16 @@ class LinkController(override val kodein: Kodein) : Iface, KodeinAware {
         }
     }
 
-    override fun lsAll(): List<Link> {
-        return dbManager.link.getAllLink().map { it.toThriftLink() }.toList()
-    }
+    override fun lsAll(): List<Link> = transaction { dbManager.link.getAllLink().map { it.toThriftLink() }.toList() }
 
     override fun lsBox(boxId: Long): List<Link> {
         val box = dbManager.box.getBox(boxId)
         return dbManager.link.getLink(box).map { it.toThriftLink() }
     }
 
-    override fun lsInner(boxId: Long, innerPath: String): Link {
+    override fun lsInner(boxId: Long, innerPath: String): Link = transaction {
         val box = dbManager.box.getBox(boxId)
-        return dbManager.link.getLink(box, innerPath).toThriftLink()
+        dbManager.link.getLink(box, innerPath).toThriftLink()
     }
 
     override fun removeAll() {

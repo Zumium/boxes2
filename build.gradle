@@ -30,6 +30,7 @@ jar {
     manifest {
         attributes 'Main-Class': 'cn.zumium.boxes.MainKt'
     }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 repositories {
@@ -47,7 +48,7 @@ dependencies {
     compile "org.apache.thrift:libthrift:$thrift_version"
     compile "commons-io:commons-io:$commons_io_version"
     compile "org.slf4j:slf4j-simple:$slf4j_version"
-    runtime "com.h2database:h2:$h2_version"
+    compile "com.h2database:h2:$h2_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 

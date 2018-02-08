@@ -13,6 +13,7 @@ import com.github.salomonbrys.kodein.instance
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
 class DbManager(override val kodein: Kodein) : KodeinAware {
@@ -55,6 +56,8 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
 
     fun init() {
         Database.connect("jdbc:h2:${configManager.dbPath()}", driver = "org.h2.Driver")
-        SchemaUtils.create(Boxes, Links)
+        transaction {
+            SchemaUtils.create(Boxes, Links)
+        }
     }
 }

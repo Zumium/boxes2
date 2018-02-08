@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.*
 object Links : LongIdTable() {
     val innerPath = varchar("inner_path", 512)
     val box = reference("box", Boxes)
-    val destination = varchar("destination", 512).uniqueIndex()
+    val destination = varchar("destination", 512)/*.uniqueIndex()*/
     val type = enumeration("type", LinkType::class.java)
     val createdAt = datetime("created_at")
 }

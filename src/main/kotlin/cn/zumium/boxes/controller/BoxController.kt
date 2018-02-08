@@ -60,7 +60,7 @@ class BoxController(override val kodein: Kodein) : Iface, KodeinAware {
         }
     }
 
-    override fun currentBoxes(): List<Box> = dbManager.box.getAllBox().map { it.toThriftBox() }
+    override fun currentBoxes(): List<Box> = transaction { dbManager.box.getAllBox().map { it.toThriftBox() } }
 
-    override fun get(id: Long): Box = dbManager.box.getBox(id).toThriftBox()
+    override fun get(id: Long): Box = transaction { dbManager.box.getBox(id).toThriftBox() }
 }

@@ -18,8 +18,8 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
     private val sevenZipUtil = instance<SevenZipUtil>()
 
     inner class BoxManager {
-        fun create(name: String) = FileUtils.forceMkdir(File(boxPath(name).toString()))
-        fun remove(name: String) = FileUtils.forceDelete(File(boxPath(name).toString()))
+        fun create(name: String) = FileUtils.forceMkdir(boxPath(name).toFile())
+        fun remove(name: String) = FileUtils.forceDelete(boxPath(name).toFile())
     }
 
     inner class FileManager {
@@ -29,8 +29,8 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
                 throw FsBoxException("source $srcFile not exist")
 
             when (addBy) {
-                AddBy.COPY -> copy(srcFile, File(boxFullPath(boxName, innerPath).toString()))
-                AddBy.MOVE -> move(srcFile, File(boxFullPath(boxName, innerPath).toString()))
+                AddBy.COPY -> copy(srcFile, boxFullPath(boxName, innerPath).toFile())
+                AddBy.MOVE -> move(srcFile, boxFullPath(boxName, innerPath).toFile())
             }
         }
 
@@ -46,14 +46,14 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
         }
 
         fun remove(boxName: String, innerPath: String) {
-            val removedFile = File(boxFullPath(boxName, innerPath).toString())
+            val removedFile = boxFullPath(boxName, innerPath).toFile()
             if (!removedFile.exists())
                 throw FsBoxException("box file $boxName:$innerPath not exist")
             FileUtils.forceDelete(removedFile)
         }
 
         fun ls(boxName: String, innerDir: String): List<LsItem> {
-            val targetDir = File(boxFullPath(boxName, innerDir).toString())
+            val targetDir = boxFullPath(boxName, innerDir).toFile()
             if (!targetDir.exists())
                 throw FsBoxException("box file $boxName:$innerDir not exist")
             if (!targetDir.isDirectory)
@@ -65,32 +65,32 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
         }
 
         fun moveBetweenBox(srcBoxName: String, srcInnerPath: String, dstBoxName: String, dstInnerPath: String) {
-            val srcFile = File(boxFullPath(srcBoxName, srcInnerPath).toString())
-            val dstFile = File(boxFullPath(dstBoxName, dstInnerPath).toString())
+            val srcFile = boxFullPath(srcBoxName, srcInnerPath).toFile()
+            val dstFile = boxFullPath(dstBoxName, dstInnerPath).toFile()
             if (!srcFile.exists())
                 throw FsBoxException("box file $srcBoxName:$srcInnerPath not exist")
             move(srcFile, dstFile)
         }
 
         fun copyBetweenBox(srcBoxName: String, srcInnerPath: String, dstBoxName: String, dstInnerPath: String) {
-            val srcFile = File(boxFullPath(srcBoxName, srcInnerPath).toString())
-            val dstFile = File(boxFullPath(dstBoxName, dstInnerPath).toString())
+            val srcFile = boxFullPath(srcBoxName, srcInnerPath).toFile()
+            val dstFile = boxFullPath(dstBoxName, dstInnerPath).toFile()
             if (!srcFile.exists())
                 throw FsBoxException("box file $srcBoxName:$srcInnerPath not exist")
             copy(srcFile, dstFile)
         }
 
         fun innerMove(boxName: String, srcInnerPath: String, dstInnerPath: String) {
-            val srcFile = File(boxFullPath(boxName, srcInnerPath).toString())
-            val dstFile = File(boxFullPath(boxName, dstInnerPath).toString())
+            val srcFile = boxFullPath(boxName, srcInnerPath).toFile()
+            val dstFile = boxFullPath(boxName, dstInnerPath).toFile()
             if (!srcFile.exists())
                 throw FsBoxException("box file $boxName:$srcInnerPath not exist")
             move(srcFile, dstFile)
         }
 
         fun innerCopy(boxName: String, srcInnerPath: String, dstInnerPath: String) {
-            val srcFile = File(boxFullPath(boxName, srcInnerPath).toString())
-            val dstFile = File(boxFullPath(boxName, dstInnerPath).toString())
+            val srcFile = boxFullPath(boxName, srcInnerPath).toFile()
+            val dstFile = boxFullPath(boxName, dstInnerPath).toFile()
             if (!srcFile.exists())
                 throw FsBoxException("box file $boxName:$srcInnerPath not exist")
             copy(srcFile, dstFile)
@@ -137,7 +137,7 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
     inner class ArchiveManager {
         fun archive(boxName: String) = sevenZipUtil.compressDirectory(boxPath(boxName), archivePath(boxName))
 
-        fun unarchive(boxName: String) = sevenZipUtil.decompressDirectory(archivePath(boxName), Paths.get(configManager.boxBase()))
+        fun unarchive(boxName: String) = sevenZipUtil.decompressDirectory(archivePath(boxName), configManager.boxBase())
     }
 
     val box = BoxManager()
@@ -146,7 +146,9 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
     val archive = ArchiveManager()
 
     //--------------helper functions-------------
-    private fun archivePath(name: String) = get(configManager.archiveBase(), "${name}.${configManager.archiveExtension()}")
-    private fun boxPath(name: String) = get(configManager.boxBase(), name)
+//    private fun archivePath(name: String) = get(configManager.archiveBase(), "${name}.${configManager.archiveExtension()}")
+    private fun archivePath(name: String) = configManager.archiveBase().resolve("${name}.${configManager.archiveExtension()}")
+//    private fun boxPath(name: String) = get(configManager.boxBase(), name)
+    private fun boxPath(name: String) = configManager.boxBase().resolve(name)
     private fun boxFullPath(name: String, innerPath: String) = boxPath(name).resolve(innerPath)
 }

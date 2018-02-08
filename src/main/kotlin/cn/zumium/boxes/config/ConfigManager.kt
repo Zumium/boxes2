@@ -2,6 +2,7 @@ package cn.zumium.boxes.config
 
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
+import java.nio.file.Paths.get
 
 class ConfigManager(override val kodein: Kodein) : KodeinAware{
     private val kHomeEnvVariableKey = "BOXES_HOME"
@@ -22,9 +23,9 @@ class ConfigManager(override val kodein: Kodein) : KodeinAware{
         }
     }
 
-    fun dbPath() = home + kDbFile
-    fun boxBase() = home + kBoxBaseDirName
-    fun archiveBase() = home + kArchiveBaseDirName
+    fun dbPath() = get(home, kDbFile)
+    fun boxBase() = get(home, kBoxBaseDirName)
+    fun archiveBase() = get(home, kArchiveBaseDirName)
     fun port() = port
     fun archiveExtension() = kArchiveExtension
 }

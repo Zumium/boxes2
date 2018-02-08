@@ -4,7 +4,7 @@ import cn.zumium.boxes.thrift.BoxStatus
 import org.jetbrains.exposed.dao.*
 
 object Boxes : LongIdTable() {
-    val name = varchar("name", 256).uniqueIndex()
+    val name = varchar("name", 256)/*.uniqueIndex()*/
     val description = varchar("description", 512).nullable()
     val status = enumeration("status", BoxStatus::class.java)
     val createdAt = datetime("created_at")
