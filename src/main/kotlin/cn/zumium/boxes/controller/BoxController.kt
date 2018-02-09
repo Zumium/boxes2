@@ -49,6 +49,7 @@ class BoxController(override val kodein: Kodein) : Iface, KodeinAware {
             val box = dbManager.box.getBox(id)
             fsManager.archive.archive(box.name)
             box.status = BoxStatus.ARCHIVED
+            fsManager.box.remove(box.name)
         }
     }
 
@@ -57,6 +58,7 @@ class BoxController(override val kodein: Kodein) : Iface, KodeinAware {
             val box = dbManager.box.getBox(id)
             fsManager.archive.unarchive(box.name)
             box.status = BoxStatus.OPEN
+            fsManager.archive.remove(box.name)
         }
     }
 

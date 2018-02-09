@@ -138,6 +138,8 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
         fun archive(boxName: String) = sevenZipUtil.compressDirectory(boxPath(boxName), archivePath(boxName))
 
         fun unarchive(boxName: String) = sevenZipUtil.decompressDirectory(archivePath(boxName), configManager.boxBase())
+
+        fun remove(boxName: String) = FileUtils.forceDelete(archivePath(boxName).toFile())
     }
 
     val box = BoxManager()

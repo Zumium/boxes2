@@ -6,7 +6,8 @@ struct Box {
     1: i64 id,
     2: string name,
     3: string description,
-    4: Timestamp createdAt,
+    4: BoxStatus status,
+    5: Timestamp createdAt,
 }
 
 enum BoxStatus {
