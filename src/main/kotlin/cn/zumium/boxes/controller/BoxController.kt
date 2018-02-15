@@ -48,6 +48,10 @@ class BoxController(override val kodein: Kodein) : Iface, KodeinAware {
         reportException("setting name of box") {
             transaction {
                 val box = dbManager.box.getBox(id)
+                when (box.status) {
+                    BoxStatus.OPEN -> fsManager.box.rename(box.name, name)
+                    BoxStatus.ARCHIVED -> fsManager.archive.rename(box.name, name)
+                }
                 box.name = name
             }
         }

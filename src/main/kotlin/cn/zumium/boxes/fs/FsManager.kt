@@ -20,6 +20,7 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
     inner class BoxManager {
         fun create(name: String) = FileUtils.forceMkdir(boxPath(name).toFile())
         fun remove(name: String) = FileUtils.forceDelete(boxPath(name).toFile())
+        fun rename(oldName: String, newName: String) = FileUtils.moveDirectory(boxPath(oldName).toFile(), boxPath(newName).toFile())
     }
 
     inner class FileManager {
@@ -140,6 +141,8 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
         fun unarchive(boxName: String) = sevenZipUtil.decompressDirectory(archivePath(boxName), configManager.boxBase())
 
         fun remove(boxName: String) = FileUtils.forceDelete(archivePath(boxName).toFile())
+
+        fun rename(oldName: String, newName: String) = FileUtils.moveFile(archivePath(oldName).toFile(), archivePath(newName).toFile())
     }
 
     val box = BoxManager()
