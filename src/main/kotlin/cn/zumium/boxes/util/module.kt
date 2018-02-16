@@ -5,5 +5,5 @@ import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.singleton
 
 val UtilModule = Kodein.Module {
-    bind<SevenZipUtil>() with singleton { SevenZipUtil(kodein) }
+    bind<SevenZipWrapper>() with singleton { SevenZipWrapper(kodein) }
 }

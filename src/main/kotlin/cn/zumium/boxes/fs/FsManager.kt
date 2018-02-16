@@ -2,7 +2,7 @@ package cn.zumium.boxes.fs
 
 import cn.zumium.boxes.config.ConfigManager
 import cn.zumium.boxes.thrift.*
-import cn.zumium.boxes.util.SevenZipUtil
+import cn.zumium.boxes.util.SevenZipWrapper
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
 import com.github.salomonbrys.kodein.instance
@@ -11,11 +11,10 @@ import org.apache.commons.io.filefilter.TrueFileFilter
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.Paths.get
 
 class FsManager(override val kodein: Kodein) : KodeinAware {
     private val configManager = instance<ConfigManager>()
-    private val sevenZipUtil = instance<SevenZipUtil>()
+    private val sevenZipWrapper = instance<SevenZipWrapper>()
 
     inner class BoxManager {
         fun create(name: String) = FileUtils.forceMkdir(boxPath(name).toFile())
@@ -136,9 +135,9 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
     }
 
     inner class ArchiveManager {
-        fun archive(boxName: String) = sevenZipUtil.compressDirectory(boxPath(boxName), archivePath(boxName))
+        fun archive(boxName: String) = sevenZipWrapper.compressDirectory(boxPath(boxName), archivePath(boxName))
 
-        fun unarchive(boxName: String) = sevenZipUtil.decompressDirectory(archivePath(boxName), configManager.boxBase())
+        fun unarchive(boxName: String) = sevenZipWrapper.decompressDirectory(archivePath(boxName), boxPath(boxName))
 
         fun remove(boxName: String) = FileUtils.forceDelete(archivePath(boxName).toFile())
 
