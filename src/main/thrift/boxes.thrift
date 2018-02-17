@@ -99,7 +99,7 @@ service LinkService {
     //Read
     list<Link> lsAll() throws (1:ServiceException excp),
     list<Link> lsBox(1:i64 boxId) throws (1:ServiceException excp),
-    Link lsInner(1:i64 boxId, 2:string innerPath) throws (1:ServiceException excp),
+    list<Link> lsInner(1:i64 boxId, 2:string innerPath) throws (1:ServiceException excp),
 
     //Delete
     void removeAll() throws (1:ServiceException excp),

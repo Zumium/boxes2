@@ -44,8 +44,8 @@ class DbManager(override val kodein: Kodein) : KodeinAware {
 
         fun getAllLink() = Link.all()
         fun getLink(id: Long) = Link.findById(id) ?: throw DbLinkNotFoundException(id)
-        fun getLink(box: Box) = Link.find { Links.box eq box }
-        fun getLink(box: Box, innerPath: String) = Link.find { Links.box eq box and (Links.innerPath eq innerPath) }.first()
+        fun getLink(box: Box) = Link.find { Links.box eq box.id }
+        fun getLink(box: Box, innerPath: String) = Link.find { Links.box eq box.id and (Links.innerPath eq innerPath) }
         fun getLink(destination: String) = Link.find { Links.destination eq destination }.first()
     }
 

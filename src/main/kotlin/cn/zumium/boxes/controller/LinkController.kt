@@ -27,7 +27,7 @@ class LinkController(override val kodein: Kodein) : Iface, KodeinAware {
         }
     }
 
-    override fun lsAll(): List<Link> = reportException("listing all links") { transaction { dbManager.link.getAllLink().map { it.toThriftLink() }.toList() } }
+    override fun lsAll(): List<Link> = reportException("listing all links") { transaction { dbManager.link.getAllLink().map { it.toThriftLink() } } }
 
     override fun lsBox(boxId: Long): List<Link> = reportException("listing links of a box") {
         transaction {
@@ -36,10 +36,10 @@ class LinkController(override val kodein: Kodein) : Iface, KodeinAware {
         }
     }
 
-    override fun lsInner(boxId: Long, innerPath: String): Link = reportException("removing link") {
+    override fun lsInner(boxId: Long, innerPath: String): List<Link> = reportException("listing link") {
         transaction {
             val box = dbManager.box.getBox(boxId)
-            dbManager.link.getLink(box, innerPath).toThriftLink()
+            dbManager.link.getLink(box, innerPath).map { it.toThriftLink() }
         }
     }
 
@@ -89,9 +89,11 @@ class LinkController(override val kodein: Kodein) : Iface, KodeinAware {
         reportException("removing link") {
             transaction {
                 val box = dbManager.box.getBox(boxId)
-                val link = dbManager.link.getLink(box, innerPath)
-                fsManager.link.remove(link.destination)
-                link.delete()
+                val links = dbManager.link.getLink(box, innerPath)
+                links.forEach {
+                    fsManager.link.remove(it.destination)
+                    it.delete()
+                }
             }
         }
     }
