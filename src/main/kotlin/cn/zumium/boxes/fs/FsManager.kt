@@ -53,14 +53,15 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
         }
 
         fun ls(boxName: String, innerDir: String): List<LsItem> {
-            val targetDir = boxFullPath(boxName, innerDir).toFile()
+            val targetDirPath = boxFullPath(boxName, innerDir)
+            val targetDir = targetDirPath.toFile()
             if (!targetDir.exists())
                 throw FsBoxException("box file $boxName:$innerDir not exist")
             if (!targetDir.isDirectory)
                 throw FsBoxException("box file $boxName:$innerDir is not a directory")
 
-            val lsFiles = FileUtils.listFiles(targetDir, TrueFileFilter.TRUE, TrueFileFilter.TRUE)
-            val lsItems = lsFiles.map { LsItem(it.name, if (it.isDirectory) LsType.DIR else LsType.FILE) }.toList()
+            val lsFiles = Files.newDirectoryStream(targetDirPath)
+            val lsItems = lsFiles.map { it.toFile() }.map { LsItem(it.name, if (it.isDirectory) LsType.DIR else LsType.FILE) }.toList()
             return lsItems
         }
 
