@@ -151,8 +151,8 @@ class FsManager(override val kodein: Kodein) : KodeinAware {
 
     //--------------helper functions-------------
 //    private fun archivePath(name: String) = get(configManager.archiveBase(), "${name}.${configManager.archiveExtension()}")
-    private fun archivePath(name: String) = configManager.archiveBase().resolve("${name}.${configManager.archiveExtension()}")
+    private fun archivePath(name: String) = configManager.archiveBase().resolve("${name}.${configManager.archiveExtension()}").normalize()
 //    private fun boxPath(name: String) = get(configManager.boxBase(), name)
-    private fun boxPath(name: String) = configManager.boxBase().resolve(name)
-    private fun boxFullPath(name: String, innerPath: String) = boxPath(name).resolve(innerPath)
+    private fun boxPath(name: String) = configManager.boxBase().resolve(name).normalize()
+    private fun boxFullPath(name: String, innerPath: String) = boxPath(name).resolve(innerPath).normalize()
 }
